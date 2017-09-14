@@ -1,0 +1,67 @@
+apply plugin: 'java'
+apply plugin: 'application'
+sourceCompatibility = '1.8'
+version"1.0"
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+mainClassName = 'Main.App'
+
+
+ext{
+    
+    Depfold= 'lib'
+    copDependsDir = "build/$libsDirName/$Depfold"
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'com.jfoenix:jfoenix:1.3.0'
+    compile project(':GUIs')
+    compile project(':Model')
+}
+
+
+task fatJar(type: Jar) {
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+    with jar
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart'
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+jar {
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+    manifest {
+        attributes 'Main-Class': mainClassName ,
+                   'Class-Path': configurations.runtime.files.collect { "$Depfold/$it.name" }.join(' ')
+    }
+
+}
+
+task copyToLib(type: Copy) {
+    into copDependsDir
+    from configurations.runtime
+}
+
+task copyfromBuildDir(type: Copy){
+    from ('build/libs')
+    into ('dist')
+    
+}
+
+task deleteBuilddist(type: Delete){
+    delete 'build/libs'
+}
+
+jar.dependsOn copyToLib
+jar.dependsOn fatJar
+installDist.finalizedBy copyfromBuildDir
+copyfromBuildDir.finalizedBy deleteBuilddist

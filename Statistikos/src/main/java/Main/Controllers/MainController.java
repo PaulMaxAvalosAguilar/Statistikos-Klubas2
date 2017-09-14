@@ -1,0 +1,181 @@
+/*
+ * Copyright (C) 2017 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+package Main.Controllers;
+
+import FXControllers.calculatorController;
+import com.jfoenix.controls.JFXTextArea;
+import com.sdt.Datos.Controllers.exceptions.NonexistentEntityException;
+import com.sdt.Datos.Datos;
+import com.sdt.Datos.dao.DatosDao;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+
+/**
+ * FXML Controller class
+ *
+ * @author Paul Max Avalos Aguilar at S.D.T. pauldromeasaurio@hotmail.com
+ */
+public class MainController implements Initializable {
+
+    @FXML
+    private AnchorPane mainAnchor;
+
+    private calculatorController con;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        try {
+
+            URL location = getClass().getResource("/calculator.fxml");
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(location);
+            fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory());
+
+            Parent pn = (Parent) fxmlLoader.load(location.openStream());
+            con = fxmlLoader.getController();
+            con.doUpdate();
+            mainAnchor.getChildren().addAll(pn);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    private void addDataAction(ActionEvent event) {
+        Dialog<String> dialog = new Dialog();
+        dialog.setTitle("Add Data Dialog");
+        dialog.setHeaderText("Enter your data:");
+        ButtonType addButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+
+        BorderPane pane = new BorderPane();
+        JFXTextArea area = new JFXTextArea();
+        pane.setCenter(area);
+
+        Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
+        addButton.setDisable(true);
+
+        area.textProperty().addListener((observable, oldValue, newValue) -> {
+            addButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(pane);
+
+        Platform.runLater(() -> area.requestFocus());
+
+        dialog.setResultConverter((param) -> {
+            if(param == addButtonType){
+                return "";
+            }
+            return null;
+        });
+        
+        Optional<String> result = dialog.showAndWait();
+
+        if ((result.isPresent())) {
+            String sa = area.getText().replaceAll("(?m)^[ \t]*\r?\n", "");
+            String[] s = sa.split("\\r?\\n");
+            ArrayList<String> arrList = new ArrayList<>(Arrays.asList(s));
+            boolean errors = false;
+            DatosDao ddao = DatosDao.getInstance();
+            Datos dato = new Datos();
+            for (int i = 0; i < arrList.size(); i++) {
+
+                try {
+                    double numero = Double.valueOf(arrList.get(i).replaceAll(",", "."));
+
+                    dato.setNumero(numero);
+                    ddao.updateRegistro(dato);
+
+                } catch (NumberFormatException ex) {
+                    errors = true;
+                } catch (Exception ex) {
+                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+
+            if (errors) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Errors in Data");
+                alert.setHeaderText(null);
+                alert.setContentText("Some values could not be parsed as numbers thus the "
+                        + "program will give incorrect results");
+
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Data added");
+                alert.setHeaderText(null);
+                alert.setContentText("All data was added correctly");
+
+                alert.showAndWait();
+            }
+
+        }
+    }
+
+    @FXML
+    private void deleteDataAction(ActionEvent event) {
+        DatosDao ddao = DatosDao.getInstance();
+        Datos dato = new Datos();
+        ddao.getAllRegistros().stream().forEach((t) -> {
+            try {
+                ddao.deleteRegistro(t.getId());
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Deleted data");
+        alert.setHeaderText(null);
+        alert.setContentText("Data was succesfully deleted");
+
+        alert.showAndWait();
+        
+        con.doUpdate();
+    }
+
+    @FXML
+    private void calculateAction(ActionEvent event) {
+        con.doUpdate();
+    }
+}

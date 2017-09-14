@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="574.0" prefWidth="798.0" style="-fx-background-color: #029ccc;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Main.Controllers.MainController">
+   <children>
+      <AnchorPane fx:id="mainAnchor" layoutY="81.0" minHeight="-Infinity" prefHeight="493.0" prefWidth="798.0" />
+      <Label layoutX="286.0" layoutY="35.0" text="STATISTIKOS KLUBAS 2">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <JFXButton buttonType="RAISED" layoutX="27.0" layoutY="33.0" onAction="#addDataAction" style="-fx-background-color: ff0037;" text="Add Data" />
+      <JFXButton buttonType="RAISED" layoutX="112.0" layoutY="33.0" onAction="#deleteDataAction" style="-fx-background-color: #b5b1b2;" text="Delete Data" />
+      <JFXButton layoutX="667.0" layoutY="33.0" onAction="#calculateAction" style="-fx-background-color: #000000;" text="Calculate" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </JFXButton>
+   </children>
+</AnchorPane>
