@@ -486,7 +486,7 @@ public class MathDisplay {
         textAppend = String.format("El valor real va a ser cualquier numero menos la media\n");
         datosGarea.appendText(textAppend);
         textAppend = String.format("5.-El coeficiente de variacion puede que sea simetrico pero con unos datos "
-                + "muy separados esto va \nrelacionado con el ancho de la grafica\n");
+                + "muy separados, esto va \nrelacionado con el ancho de la grafica\n");
         datosGarea.appendText(textAppend);
         textAppend = String.format("6.- Si la desviacion estandar aproximada es muy distante de la  "
                 + "desviacion estandar la desviacion estandar\n aproximada no es confiable\n");
