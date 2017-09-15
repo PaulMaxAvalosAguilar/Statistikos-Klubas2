@@ -28,9 +28,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -71,7 +73,7 @@ public class MainController implements Initializable {
             con = fxmlLoader.getController();
             con.doUpdate();
             mainAnchor.getChildren().addAll(pn);
-            
+
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -101,53 +103,67 @@ public class MainController implements Initializable {
         Platform.runLater(() -> area.requestFocus());
 
         dialog.setResultConverter((param) -> {
-            if(param == addButtonType){
+            if (param == addButtonType) {
                 return "";
             }
             return null;
         });
-        
+
         Optional<String> result = dialog.showAndWait();
 
         if ((result.isPresent())) {
             String sa = area.getText().replaceAll("(?m)^[ \t]*\r?\n", "");
             String[] s = sa.split("\\r?\\n");
             ArrayList<String> arrList = new ArrayList<>(Arrays.asList(s));
-            boolean errors = false;
+
             DatosDao ddao = DatosDao.getInstance();
             Datos dato = new Datos();
-            for (int i = 0; i < arrList.size(); i++) {
 
-                try {
-                    double numero = Double.valueOf(arrList.get(i).replaceAll(",", "."));
+            Task<Boolean> task = new Task<Boolean>() {
+                @Override
+                protected Boolean call() throws Exception {
+                    boolean err = false;
+                    for (int i = 0; i < arrList.size(); i++) {
 
-                    dato.setNumero(numero);
-                    ddao.updateRegistro(dato);
+                        try {
+                            double numero = Double.valueOf(arrList.get(i).replaceAll(",", "."));
+                            dato.setNumero(numero);
+                            ddao.updateRegistro(dato);
 
-                } catch (NumberFormatException ex) {
-                    errors = true;
-                } catch (Exception ex) {
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (NumberFormatException ex) {
+                            err = true;
+
+                        } catch (Exception ex) {
+                            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                    return new Boolean(err);
                 }
+            };
 
-            }
+            new Thread(task).start();
 
-            if (errors) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Errors in Data");
-                alert.setHeaderText(null);
-                alert.setContentText("Some values could not be parsed as numbers thus the "
-                        + "program will give incorrect results");
+            task.setOnSucceeded((e) -> {
+                boolean errors = task.getValue();
+                if (errors) {
 
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Data added");
-                alert.setHeaderText(null);
-                alert.setContentText("All data was added correctly");
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Errors in Data");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Some values could not be parsed as numbers thus the "
+                            + "program will give incorrect results");
 
-                alert.showAndWait();
-            }
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Data added");
+                    alert.setHeaderText(null);
+                    alert.setContentText("All data was added correctly");
+
+                    alert.showAndWait();
+                }
+            });
 
         }
     }
@@ -156,22 +172,32 @@ public class MainController implements Initializable {
     private void deleteDataAction(ActionEvent event) {
         DatosDao ddao = DatosDao.getInstance();
         Datos dato = new Datos();
-        ddao.getAllRegistros().stream().forEach((t) -> {
-            try {
-                ddao.deleteRegistro(t.getId());
-            } catch (NonexistentEntityException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                ddao.getAllRegistros().stream().forEach((t) -> {
+                    try {
+                        ddao.deleteRegistro(t.getId());
+                    } catch (NonexistentEntityException ex) {
+                        Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+                return null;
             }
+
+        };
+
+        task.setOnSucceeded((e) -> {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Deleted data");
+            alert.setHeaderText(null);
+            alert.setContentText("Data was succesfully deleted");
+            alert.showAndWait();
+            con.doUpdate();
         });
 
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Deleted data");
-        alert.setHeaderText(null);
-        alert.setContentText("Data was succesfully deleted");
-
-        alert.showAndWait();
         
-        con.doUpdate();
     }
 
     @FXML

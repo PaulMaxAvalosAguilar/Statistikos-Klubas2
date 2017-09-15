@@ -26,6 +26,8 @@ import com.sdt.Datos.dao.DatosDao;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
@@ -148,12 +150,10 @@ public class calculatorController implements Initializable {
     @FXML
     private Button etiquetadacumr;
 
-    String nombre ="";
-    
+    String nombre = "";
 
     private List<Datos> list;
     private DatosDao ddao;
-
 
     private MathDisplay display;
 
@@ -309,43 +309,57 @@ public class calculatorController implements Initializable {
     public void doUpdate() {
 
         ddao = DatosDao.getInstance();
-        
+
         list = ddao.getAllRegistros();
         datosGarea.setText("");
         calculate();
     }
 
     private void calculate() {
-        MathDisplay mat = new MathDisplay(datosGarea, list, nombre, tablafrec, notablafrec,
-                limitablafrec, limstablafrec, fabstablafrec, freltablafrec, tabladist, notabladist,
-                valortabladist, dacumabstabladist, dacumreltabladist);
-        display = mat;
 
-        Graphs graphdisplay = new Graphs();
-        graphdisplay.displayLineChart(lineChart, list, nombre);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                MathDisplay mat = new MathDisplay(datosGarea, list, nombre, tablafrec, notablafrec,
+                        limitablafrec, limstablafrec, fabstablafrec, freltablafrec, tabladist, notabladist,
+                        valortabladist, dacumabstabladist, dacumreltabladist);
+                display = mat;
 
-        fabslabel.setText(nombre);
-        frellabel.setText(nombre);
-        dacumalabel.setText(nombre);
-        dacumrlabel.setText(nombre);
+                Graphs graphdisplay = new Graphs();
+                graphdisplay.displayLineChart(lineChart, list, nombre);
 
-        if (mat.hayDatos()) {
-            graphdisplay.displayAbsFreqHistogram(histograma, mat.getFrecuenciaAbs(),
-                    mat.getIntervalos(), titulo1, ejex1, ejey1, serie1);
+                Platform.runLater(() -> {
+                    fabslabel.setText(nombre);
+                    frellabel.setText(nombre);
+                    dacumalabel.setText(nombre);
+                    dacumrlabel.setText(nombre);
+                });
 
-            graphdisplay.displayRelFreqHistograma(histogramarel, mat.getFrecuenciaRel(),
-                    mat.getIntervalos(), titulo2, ejex2, ejey2, serie2);
-            graphdisplay.displaydistAcAbs(dacuma, mat.getdistacAbs(), mat.getintervalosdist(),
-                    titulo3, ejex3, ejey3, serie3);
-            graphdisplay.displaydistAcRel(dacumr, mat.getdistacRel(), mat.getintervalosdist(),
-                    titulo4, ejex4, ejey4, serie4);
-        } else {
-            lineChart.getData().clear();
-            histograma.getData().clear();
-            histogramarel.getData().clear();
-            dacuma.getData().clear();
-            dacumr.getData().clear();
-        }
+                if (mat.hayDatos()) {
+                    graphdisplay.displayAbsFreqHistogram(histograma, mat.getFrecuenciaAbs(),
+                            mat.getIntervalos(), titulo1, ejex1, ejey1, serie1);
+
+                    graphdisplay.displayRelFreqHistograma(histogramarel, mat.getFrecuenciaRel(),
+                            mat.getIntervalos(), titulo2, ejex2, ejey2, serie2);
+                    graphdisplay.displaydistAcAbs(dacuma, mat.getdistacAbs(), mat.getintervalosdist(),
+                            titulo3, ejex3, ejey3, serie3);
+                    graphdisplay.displaydistAcRel(dacumr, mat.getdistacRel(), mat.getintervalosdist(),
+                            titulo4, ejex4, ejey4, serie4);
+                } else {
+                    Platform.runLater(() -> {
+                        lineChart.getData().clear();
+                        histograma.getData().clear();
+                        histogramarel.getData().clear();
+                        dacuma.getData().clear();
+                        dacumr.getData().clear();
+                    });
+
+                }
+                return null;
+            }
+
+        };
+        new Thread(task).start();
 
     }
 }
