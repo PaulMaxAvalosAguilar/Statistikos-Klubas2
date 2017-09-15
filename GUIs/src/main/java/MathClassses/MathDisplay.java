@@ -458,13 +458,13 @@ public class MathDisplay {
         
         if(coefic_var>20){
             textAppend += String.format("3.-En este caso la grafica es ancha....pues el valor del coeficiente\n"
-                    + "de variacion es mayor a 20 y nuestros datos estan muy separados");
+                    + "de variacion es mayor a 20 y nuestros datos estan muy separados\n");
             if(simetrico == true){
-                textAppend += String.format("aun cuando \nnuestros datos son simetricos");
+                textAppend += String.format("aun cuando \nnuestros datos son simetricos\n");
             }
         }else if (coefic_var<=20){
             textAppend += String.format("3.-En este caso la grafica NO es ancha....pues el valor del coeficiente\n"
-                    + "de variacion es MENOr a 20");
+                    + "de variacion es MENOr a 20\n");
         }
         
         if (simetrico == true) {
@@ -477,7 +477,6 @@ public class MathDisplay {
         textAppend += String.format("5.-La dispercion de mis datos con respecto a la media es de %.2f\n",
                 standardDeviation);
         textAppend += String.format("Si yo tomo un dato cualquiera va a tener esa dispercion promedio\n");
-        textAppend += String.format("El valor real va a ser cualquier numero menos la media\n");
         
         textAppend += String.format("6.- Si la desviacion estandar aproximada es muy distante de la  "
                 + "desviacion estandar, la desviacion estandar\n aproximada no es confiable\n");
