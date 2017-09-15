@@ -154,6 +154,7 @@ public class MainController implements Initializable {
                             + "program will give incorrect results");
 
                     alert.showAndWait();
+                    con.hayValoresErr();
                 } else {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Data added");
@@ -161,6 +162,8 @@ public class MainController implements Initializable {
                     alert.setContentText("All data was added correctly");
 
                     alert.showAndWait();
+                    
+                    con.hayValores();
                 }
             });
 

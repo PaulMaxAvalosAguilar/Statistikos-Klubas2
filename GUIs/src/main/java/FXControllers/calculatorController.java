@@ -314,7 +314,16 @@ public class calculatorController implements Initializable {
         datosGarea.setText("");
         calculate();
     }
+    
+    public void hayValores(){
+        datosGarea.setText("Hay valores");
+    }
 
+    public void hayValoresErr(){
+        datosGarea.setText("Hay valores con errores");
+    }
+
+    
     private void calculate() {
 
         Task<Void> task = new Task<Void>() {
