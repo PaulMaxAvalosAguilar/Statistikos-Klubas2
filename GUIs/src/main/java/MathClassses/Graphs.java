@@ -41,12 +41,11 @@ public class Graphs {
         Platform.runLater(() -> {
             linechart.getData().clear();
             linechart.setCreateSymbols(true);
+            //El titulo debe de ser modificado
+            linechart.setTitle(nombre);
+            linechart.getXAxis().setLabel("No. de dato");
+            linechart.getYAxis().setLabel("Valor de dato");
         });
-
-        //El titulo debe de ser modificado
-        linechart.setTitle(nombre);
-        linechart.getXAxis().setLabel("No. de dato");
-        linechart.getYAxis().setLabel("Valor de dato");
 
         XYChart.Series series;
         series = new XYChart.Series();
@@ -71,11 +70,10 @@ public class Graphs {
 
         Platform.runLater(() -> {
             histograma.getData().clear();
+            histograma.titleProperty().bindBidirectional(titulo.textProperty());
+            histograma.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
+            histograma.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
         });
-
-        histograma.titleProperty().bindBidirectional(titulo.textProperty());
-        histograma.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
-        histograma.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
 
         XYChart.Series series;
         series = new XYChart.Series();
@@ -98,11 +96,10 @@ public class Graphs {
 
         Platform.runLater(() -> {
             histograma.getData().clear();
+            histograma.titleProperty().bindBidirectional(titulo.textProperty());
+            histograma.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
+            histograma.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
         });
-
-        histograma.titleProperty().bindBidirectional(titulo.textProperty());
-        histograma.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
-        histograma.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
 
         XYChart.Series series;
         series = new XYChart.Series();
@@ -125,11 +122,10 @@ public class Graphs {
 
         Platform.runLater(() -> {
             linechart.getData().clear();
+            linechart.titleProperty().bindBidirectional(titulo.textProperty());
+            linechart.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
+            linechart.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
         });
-
-        linechart.titleProperty().bindBidirectional(titulo.textProperty());
-        linechart.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
-        linechart.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
 
         XYChart.Series series;
         series = new XYChart.Series();
@@ -143,7 +139,6 @@ public class Graphs {
         Platform.runLater(() -> {
             linechart.getData().add(series);
         });
-        
 
     }
 
@@ -153,11 +148,10 @@ public class Graphs {
 
         Platform.runLater(() -> {
             linechart.getData().clear();
+            linechart.titleProperty().bindBidirectional(titulo.textProperty());
+            linechart.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
+            linechart.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
         });
-
-        linechart.titleProperty().bindBidirectional(titulo.textProperty());
-        linechart.getXAxis().labelProperty().bindBidirectional(ejex.textProperty());
-        linechart.getYAxis().labelProperty().bindBidirectional(ejey.textProperty());
 
         XYChart.Series series;
         series = new XYChart.Series();
