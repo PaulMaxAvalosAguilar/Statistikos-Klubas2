@@ -188,6 +188,7 @@ public class MainController implements Initializable {
 
         };
 
+        new Thread(task).start();
         task.setOnSucceeded((e) -> {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Deleted data");
