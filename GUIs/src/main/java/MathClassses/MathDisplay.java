@@ -139,10 +139,10 @@ public class MathDisplay {
             textAppend += String.format("\n\n");
 
             double mean = stats.getMean();
-            textAppend += String.format("La mediana es: %.6f\n", mean);
+            textAppend += String.format("La media es: %.6f\n", mean);
 
             double median = stats.getPercentile(50);
-            textAppend += String.format("La media es: %.6f\n", median);
+            textAppend += String.format("La mediana es: %.6f\n", median);
 
             double variance = stats.getVariance();
             textAppend += String.format("La varianza es: %.6f\n", variance);
@@ -155,22 +155,22 @@ public class MathDisplay {
                     coefic_var);
 
             double desviacion_aprox = range / 4;
-            textAppend += String.format("El desviacion aproximada es de %.2f\n", desviacion_aprox);
+            textAppend += String.format("El desviacion aproximada es de %.4f\n", desviacion_aprox);
 
             double sesgo = stats.getSkewness();
             textAppend += String.format("El sesgo es: %.6f\n", sesgo);
 
-            double reglaSesentayCincoBajo = mean - standardDeviation;
-            textAppend += String.format("El limite inferior al 65%% es %.2f\n", reglaSesentayCincoBajo);
+            double reglaSesentayOchoBajo = mean - standardDeviation;
+            textAppend += String.format("El limite inferior al 68%% es %.4f\n", reglaSesentayOchoBajo);
 
-            double reglaSesentayCincoAlto = mean + standardDeviation;
-            textAppend += String.format("El limite superior al 65%% es %.2f\n", reglaSesentayCincoAlto);
+            double reglaSesentayOchoAlto = mean + standardDeviation;
+            textAppend += String.format("El limite superior al 68%% es %.4f\n", reglaSesentayOchoAlto);
 
             double reglaNoventayCincoBajo = mean - (standardDeviation * 2);
-            textAppend += String.format("El limite inferior al 95%% es %.2f\n", reglaNoventayCincoBajo);
+            textAppend += String.format("El limite inferior al 95%% es %.4f\n", reglaNoventayCincoBajo);
 
             double reglaNoventayCincoAlto = mean + (standardDeviation * 2);
-            textAppend += String.format("El limite superior al 95%% es %.2f\n", reglaNoventayCincoAlto);
+            textAppend += String.format("El limite superior al 95%% es %.4f\n", reglaNoventayCincoAlto);
 
             
 
