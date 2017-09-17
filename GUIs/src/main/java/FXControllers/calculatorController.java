@@ -306,32 +306,32 @@ public class calculatorController implements Initializable {
 
     }
 
-    public void doUpdate() {
+    public void doUpdate(int decimals) {
 
         ddao = DatosDao.getInstance();
 
         list = ddao.getAllRegistros();
         datosGarea.setText("");
-        calculate();
+        calculate(decimals);
     }
-    
-    public void hayValores(){
+
+    public void hayValores() {
         datosGarea.setText("Hay valores");
     }
 
-    public void hayValoresErr(){
+    public void hayValoresErr() {
         datosGarea.setText("Hay valores con errores");
     }
 
-    
-    private void calculate() {
+    private void calculate(int decimals) {
 
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                MathDisplay mat = new MathDisplay(datosGarea, list, nombre, tablafrec, notablafrec,
-                        limitablafrec, limstablafrec, fabstablafrec, freltablafrec, tabladist, notabladist,
-                        valortabladist, dacumabstabladist, dacumreltabladist);
+                MathDisplay mat = new MathDisplay(datosGarea, list, nombre, decimals, tablafrec,
+                        notablafrec, limitablafrec, limstablafrec, fabstablafrec, freltablafrec,
+                        tabladist, notabladist, valortabladist, dacumabstabladist,
+                        dacumreltabladist);
                 display = mat;
 
                 Graphs graphdisplay = new Graphs();

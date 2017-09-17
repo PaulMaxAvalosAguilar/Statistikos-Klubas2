@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,8 +42,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -70,7 +73,7 @@ public class MainController implements Initializable {
 
             Parent pn = (Parent) fxmlLoader.load(location.openStream());
             con = fxmlLoader.getController();
-            con.doUpdate();
+            con.doUpdate(0);
             mainAnchor.getChildren().addAll(pn);
 
         } catch (IOException ex) {
@@ -197,13 +200,52 @@ public class MainController implements Initializable {
             alert.setHeaderText(null);
             alert.setContentText("Data was succesfully deleted");
             alert.showAndWait();
-            con.doUpdate();
+            con.doUpdate(0);
         });
 
     }
 
     @FXML
     private void calculateAction(ActionEvent event) {
-        con.doUpdate();
+        Dialog<Integer> dialog = new Dialog();
+            dialog.setTitle("Choice precission Dialog");
+            dialog.setHeaderText("Enter desired decimals:");
+            ButtonType addButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+
+            BorderPane pane = new BorderPane();
+            ChoiceBox cb = new ChoiceBox(FXCollections.observableArrayList(
+                    1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+            );
+            pane.setCenter(cb);
+
+            Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
+            addButton.setDisable(true);
+
+            cb.getSelectionModel().selectFirst();
+
+            dialog.getDialogPane().setContent(pane);
+            addButton.setDisable(false);
+
+            Platform.runLater(() -> cb.requestFocus());
+            
+            dialog.setResultConverter((param) -> {
+                if (param == addButtonType) {
+                    
+                    return (int)cb.getValue();
+                    
+                }
+                return null;
+            });
+
+            
+            Optional<Integer> result = dialog.showAndWait();
+            
+            if(result.isPresent()){
+                con.doUpdate((int)cb.getValue());
+            }
+        
+        
+        
     }
 }

@@ -60,6 +60,7 @@ public class MathDisplay {
     private DescriptiveStatistics stats;
 
     private final String nombre;
+    private final int decimales;
     private boolean ceil;
 
     //variables para charts
@@ -74,7 +75,10 @@ public class MathDisplay {
     private boolean hayDatos;
 
     public MathDisplay(TextArea text, List<Datos> list,
-            String nombre, TableView tablafrec, TableColumn<Frecuencias, Integer> notablafrec,
+            String nombre,
+            int decimales,
+            TableView tablafrec, 
+            TableColumn<Frecuencias, Integer> notablafrec,
             TableColumn<Frecuencias, String> limitablafrec,
             TableColumn<Frecuencias, String> limstablafrec,
             TableColumn<Frecuencias, String> fabstablafrec,
@@ -87,6 +91,7 @@ public class MathDisplay {
         this.datosGarea = text;
         this.list = list;
         this.nombre = nombre;
+        this.decimales = decimales;
         this.tablafrec = tablafrec;
         this.notablafrec = notablafrec;
         this.limitablafrec = limitablafrec;
@@ -107,6 +112,18 @@ public class MathDisplay {
 
             this.hayDatos = true;
 
+            int decimals = this.decimales;
+            StringBuilder builder = new StringBuilder();
+            builder.append("##");
+
+            for (int i = 0; i < decimals; i++) {
+                if (i == 0) {
+                    builder.append(".");
+                }
+                builder.append("#");
+            }
+            DecimalFormat fN = new DecimalFormat(builder.toString());
+
             String textAppend = "";
             List<Double> modeList = new ArrayList();
             stats = new DescriptiveStatistics();
@@ -119,68 +136,74 @@ public class MathDisplay {
             }
 
             double numero_valores = stats.getN();
-            textAppend += String.format("El numero de valores es: %1.0f\n", numero_valores);
+            textAppend += String.format("El numero de valores es: %s\n", fN.format(numero_valores));
 
             double minValue = stats.getMin();
             double maxValue = stats.getMax();
-            textAppend += String.format("El valor mas grande es: %.2f\nEl valor mas pequeño es: %.2f\n",
-                    maxValue, minValue);
+            textAppend += String.format("El valor mas grande es: %s\nEl valor mas pequeño es: %s\n",
+                    fN.format(maxValue), fN.format(minValue));
 
             double range = Math.abs(maxValue - minValue);
-            textAppend += String.format("El valor del rango es: %.2f\n", range);
+            textAppend += String.format("El valor del rango es: %s\n", fN.format(range));
 
             Double[] arr = modeList.toArray(new Double[modeList.size()]);
             List<Double> modes = getMode(arr);
 
             textAppend += String.format("\n\n");
             for (Double number : modes) {
-                textAppend += String.format("La moda es %.2f\n", number);
+                textAppend += String.format("La moda es %s\n", fN.format(number));
             }
             textAppend += String.format("\n\n");
 
             double mean = stats.getMean();
-            textAppend += String.format("La media es: %.6f\n", mean);
+            textAppend += String.format("La media es: %s\n", fN.format(mean));
 
             double median = stats.getPercentile(50);
-            textAppend += String.format("La mediana es: %.6f\n", median);
+            textAppend += String.format("La mediana es: %s\n", fN.format(median));
 
             double variance = stats.getVariance();
-            textAppend += String.format("La varianza es: %.6f\n", variance);
-            
+            textAppend += String.format("La varianza es: %s\n", fN.format(variance));
+
             double standardDeviation = stats.getStandardDeviation();
-            textAppend += String.format("La desviacion estandar es: %.6f\n", standardDeviation);
-            
-            double coefic_var = (standardDeviation / mean)*100;
-            textAppend += String.format("El coeficiente de variacion es de %.2f%%\n", 
-                    coefic_var);
+            textAppend += String.format("La desviacion estandar es: %s\n",
+                    fN.format(standardDeviation));
+
+            double coefic_var = (standardDeviation / mean) * 100;
+            textAppend += String.format("El coeficiente de variacion es de %s%%\n",
+                    fN.format(coefic_var));
 
             double desviacion_aprox = range / 4;
-            textAppend += String.format("El desviacion aproximada es de %.4f\n", desviacion_aprox);
+            textAppend += String.format("El desviacion aproximada es de %s\n",
+                    fN.format(desviacion_aprox));
 
             double sesgo = stats.getSkewness();
-            textAppend += String.format("El sesgo es: %.6f\n", sesgo);
+            textAppend += String.format("El sesgo es: %s\n", fN.format(sesgo));
 
             double reglaSesentayOchoBajo = mean - standardDeviation;
-            textAppend += String.format("El limite inferior al 68%% es %.4f\n", reglaSesentayOchoBajo);
+            textAppend += String.format("El limite inferior al 68%% es %s\n",
+                    fN.format(reglaSesentayOchoBajo));
 
             double reglaSesentayOchoAlto = mean + standardDeviation;
-            textAppend += String.format("El limite superior al 68%% es %.4f\n", reglaSesentayOchoAlto);
+            textAppend += String.format("El limite superior al 68%% es %s\n",
+                    fN.format(reglaSesentayOchoAlto));
 
             double reglaNoventayCincoBajo = mean - (standardDeviation * 2);
-            textAppend += String.format("El limite inferior al 95%% es %.4f\n", reglaNoventayCincoBajo);
+            textAppend += String.format("El limite inferior al 95%% es %s\n",
+                    fN.format(reglaNoventayCincoBajo));
 
             double reglaNoventayCincoAlto = mean + (standardDeviation * 2);
-            textAppend += String.format("El limite superior al 95%% es %.4f\n", reglaNoventayCincoAlto);
-            
+            textAppend += String.format("El limite superior al 95%% es %s\n",
+                    fN.format(reglaNoventayCincoAlto));
+
             double reglaNoventaySieteBajo = mean - (standardDeviation * 3);
-            textAppend += String.format("El limite inferior al 97%% es %.4f\n", reglaNoventaySieteBajo);
+            textAppend += String.format("El limite inferior al 97%% es %s\n",
+                    fN.format(reglaNoventaySieteBajo));
 
             double reglaNoventaySieteAlto = mean + (standardDeviation * 3);
-            textAppend += String.format("El limite superior al 97%% es %.4f\n", reglaNoventaySieteAlto);
+            textAppend += String.format("El limite superior al 97%% es %s\n",
+                    fN.format(reglaNoventaySieteAlto));
 
-            
-
-            textAppend +=interpreta(sesgo, mean, median, standardDeviation, coefic_var);
+            textAppend += interpreta(sesgo, mean, median, standardDeviation, coefic_var);
             /*
             
             
@@ -430,7 +453,7 @@ public class MathDisplay {
 
     }
 
-    private String interpreta( double sesgo, double mean, double median,
+    private String interpreta(double sesgo, double mean, double median,
             double standardDeviation, double coefic_var) {
         boolean simetrico;
 
@@ -460,30 +483,27 @@ public class MathDisplay {
                     + " no es semejante al de la media por lo tanto tipifica al conjunto de datos\n");
         }
 
-        
-        
-        if(coefic_var>20){
+        if (coefic_var > 20) {
             textAppend += String.format("3.-En este caso la grafica es ancha....pues el valor del coeficiente\n"
                     + "de variacion es mayor a 20 y nuestros datos estan muy separados\n");
-            if(simetrico == true){
+            if (simetrico == true) {
                 textAppend += String.format("aun cuando \nnuestros datos son simetricos\n");
             }
-        }else if (coefic_var<=20){
+        } else if (coefic_var <= 20) {
             textAppend += String.format("3.-En este caso la grafica NO es ancha....pues el valor del coeficiente\n"
                     + "de variacion es MENOr a 20\n");
         }
-        
+
         if (simetrico == true) {
             textAppend += String.format("4.-La regla empirica se cumple porque la grafica es simetrica\n");
         } else {
             textAppend += String.format("4.-La regla empirica no se cumple porque la grafica no es simetrica\n");
         }
-        
 
         textAppend += String.format("5.-La dispercion de mis datos con respecto a la media es de %.2f\n",
                 standardDeviation);
         textAppend += String.format("Si yo tomo un dato cualquiera va a tener esa dispercion promedio\n");
-        
+
         textAppend += String.format("6.- Si la desviacion estandar aproximada es muy distante de la  "
                 + "desviacion estandar, la desviacion estandar\n aproximada no es confiable\n");
 
