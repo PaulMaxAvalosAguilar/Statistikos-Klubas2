@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package MathClassses;
+package FXControllers.descriptiva.MathClassses;
 
 import com.sdt.Datos.Datos;
 import com.sdt.Datos.Distribuciones;
@@ -77,7 +77,7 @@ public class MathDisplay {
     public MathDisplay(TextArea text, List<Datos> list,
             String nombre,
             int decimales,
-            TableView tablafrec, 
+            TableView tablafrec,
             TableColumn<Frecuencias, Integer> notablafrec,
             TableColumn<Frecuencias, String> limitablafrec,
             TableColumn<Frecuencias, String> limstablafrec,
@@ -127,13 +127,30 @@ public class MathDisplay {
             String textAppend = "";
             List<Double> modeList = new ArrayList();
             stats = new DescriptiveStatistics();
-
+            int max_dem_lenght = 0;
+            String[] splitter= Double.valueOf(0).toString().split("\\.");;
             for (int counter = 0; counter < list.size(); counter++) {
 
                 double d = list.get(counter).getNumero();
+
+                splitter = Double.valueOf(d).toString().split("\\.");
+                if (splitter[1].length() > max_dem_lenght) {
+                    max_dem_lenght = splitter[1].length();
+                }
                 stats.addValue(d);
                 modeList.add(d);
             }
+
+            StringBuilder sc = new StringBuilder();
+            sc.append(".");
+            if (splitter[1].length() >= 1) {
+                for (int i = 0; i < splitter[1].length() - 1; i++) {
+                    sc.append("0");
+                }
+            }
+            sc.append("1");
+
+            double decimalTablas = Double.parseDouble(sc.toString());
 
             double numero_valores = stats.getN();
             textAppend += String.format("El numero de valores es: %s\n", fN.format(numero_valores));
@@ -305,7 +322,7 @@ public class MathDisplay {
                     }
                 } else {
                     limiteSuperior = limiteInferior + largoClase;
-                    siguienteValor = limiteSuperior - .01;
+                    siguienteValor = limiteSuperior - decimalTablas;
                     frecuencia = 0;
                     for (Double d : modeList) {
                         if ((d >= limiteInferior) && (d <= siguienteValor)) {
@@ -322,13 +339,12 @@ public class MathDisplay {
                 Set of values for display
                 
                  */
-                DecimalFormat fE = new DecimalFormat("#.####");
 
                 frecuencias.setNumero(i + 1);
-                frecuencias.setFrecAbs(fE.format(frecuencia));
-                frecuencias.setFrecRel(String.format("%.2f%%", relativa));
-                frecuencias.setLimiteInferior(fE.format(limiteInferior));
-                frecuencias.setSiguienteValor(fE.format(siguienteValor));
+                frecuencias.setFrecAbs(fN.format(frecuencia));
+                frecuencias.setFrecRel(String.format("%s%%", fN.format(relativa)));
+                frecuencias.setLimiteInferior(fN.format(limiteInferior));
+                frecuencias.setSiguienteValor(fN.format(siguienteValor));
                 valoresAc.add(frecuencia);
                 valoresRel.add(relativa);
                 datosFrec.add(frecuencias);
@@ -406,11 +422,11 @@ public class MathDisplay {
 
                 }
 
-                DecimalFormat fE = new DecimalFormat("#.####");
+                
                 dist.setNumero(i + 1);
-                dist.setValor(fE.format(limiteInferior));
-                dist.setDistribucionacum(fE.format(frecAc));
-                dist.setDistribucionrelativa(String.format("%.2f%%", frecRel));
+                dist.setValor(fN.format(limiteInferior));
+                dist.setDistribucionacum(fN.format(frecAc));
+                dist.setDistribucionrelativa(String.format("%s%%", fN.format(frecRel)));
                 distacRel.add(frecRel);
                 distacAbs.add(frecAc);
                 datosDistr.add(dist);

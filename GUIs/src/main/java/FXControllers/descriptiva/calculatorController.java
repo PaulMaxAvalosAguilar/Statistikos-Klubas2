@@ -15,10 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package FXControllers;
+package FXControllers.descriptiva;
 
-import MathClassses.Graphs;
-import MathClassses.MathDisplay;
+import FXControllers.descriptiva.MathClassses.Graphs;
+import FXControllers.descriptiva.MathClassses.MathDisplay;
 import com.sdt.Datos.Datos;
 import com.sdt.Datos.Distribuciones;
 import com.sdt.Datos.Frecuencias;

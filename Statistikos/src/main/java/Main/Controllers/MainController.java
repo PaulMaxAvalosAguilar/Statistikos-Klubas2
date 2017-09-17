@@ -17,7 +17,7 @@
  */
 package Main.Controllers;
 
-import FXControllers.calculatorController;
+import FXControllers.descriptiva.calculatorController;
 import com.jfoenix.controls.JFXTextArea;
 import com.sdt.Datos.Controllers.exceptions.NonexistentEntityException;
 import com.sdt.Datos.Datos;
