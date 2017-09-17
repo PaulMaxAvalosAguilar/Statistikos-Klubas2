@@ -172,10 +172,10 @@ public class MathDisplay {
             double reglaNoventayCincoAlto = mean + (standardDeviation * 2);
             textAppend += String.format("El limite superior al 95%% es %.4f\n", reglaNoventayCincoAlto);
             
-            double reglaNoventaySieteBajo = mean - (standardDeviation * 2);
+            double reglaNoventaySieteBajo = mean - (standardDeviation * 3);
             textAppend += String.format("El limite inferior al 97%% es %.4f\n", reglaNoventaySieteBajo);
 
-            double reglaNoventaySieteAlto = mean + (standardDeviation * 2);
+            double reglaNoventaySieteAlto = mean + (standardDeviation * 3);
             textAppend += String.format("El limite superior al 97%% es %.4f\n", reglaNoventaySieteAlto);
 
             
